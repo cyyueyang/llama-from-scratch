@@ -15,9 +15,9 @@ class Attention(nn.Module):
         assert d_model % num_heads == 0
         self.head_dim = d_model // num_heads
         self.group = num_heads // num_kv_heads
-        self.w_qkv = nn.Linear(d_model, self.head_dim * (self.num_heads + 2 * self.num_kv_heads))
+        self.w_qkv = nn.Linear(d_model, self.head_dim * (self.num_heads + 2 * self.num_kv_heads), bias=False)
 
-        self.w_o = nn.Linear(d_model, d_model)
+        self.w_o = nn.Linear(d_model, d_model, bias=False)
 
         mask = torch.tril(torch.ones(max_seq_len, max_seq_len, dtype=torch.bool))
         self.register_buffer("mask", mask)

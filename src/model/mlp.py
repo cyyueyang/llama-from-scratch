@@ -8,9 +8,9 @@ class SwiGLU(nn.Module):
         self.d_model = d_model
         self.d_ff = d_ff
 
-        self.w_up = nn.Linear(d_model, d_ff)
-        self.w_gate = nn.Linear(d_model, d_ff)
-        self.w_down = nn.Linear(d_ff, d_model)
+        self.w_up = nn.Linear(d_model, d_ff, bias=False)
+        self.w_gate = nn.Linear(d_model, d_ff, bias=False)
+        self.w_down = nn.Linear(d_ff, d_model, bias=False)
 
     def forward(self, x):
         return self.w_down(self.w_up(x) * F.silu(self.w_gate(x)))
