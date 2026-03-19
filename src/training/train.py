@@ -164,7 +164,7 @@ def main():
     config = LLaMAConfig()
 
     model = LLaMA(config)
-    total_params = sum(p.numel() for p in model.model.parameters())
+    total_params = sum(p.numel() for p in model.parameters())
     print(f"Total params: {total_params}")
 
     tokenizer = Tokenizer(config.vocab_path, config.merges_path)
