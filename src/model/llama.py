@@ -81,7 +81,7 @@ class LLaMA(nn.Module):
 
         kv_cache = self.kv_cache if use_cache else None
         for layer in self.layers:
-            x = layer(x, start_pos = start_pos, kv_cache = self.kv_cache)
+            x = layer(x, start_pos = start_pos, kv_cache = kv_cache)
 
         x = self.norm(x)
         logits = self.lm_head(x)
@@ -122,7 +122,7 @@ class LLaMA(nn.Module):
 
         for pos in range(seq_len, seq_len + max_new_token - 1):
 
-            x = generated[:, -1, :]
+            x = generated[:, -1]
 
             logits, _ = self.forward(input_ids, start_pos=pos, use_cache=True)
             next_logits = logits[:, -1, :] / temperature
