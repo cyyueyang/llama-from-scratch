@@ -19,14 +19,14 @@ class RoPE(nn.Module):
         self.register_buffer('cos_cached', cos_cached)
         self.register_buffer('sin_cached', sin_cached)
 
-    def forward(self, x):
+    def forward(self, x, start_pos=0):
         bs, num_heads, seq_len, d_model = x.size()
 
         x1 = x[..., 0::2]
         x2 = x[..., 1::2]
 
-        cos = self.cos_cached[:seq_len].unsqueeze(0).unsqueeze(0)
-        sin = self.sin_cached[:seq_len].unsqueeze(0).unsqueeze(0)
+        cos = self.cos_cached[start_pos: start_pos + seq_len].unsqueeze(0).unsqueeze(0)
+        sin = self.sin_cached[start_pos: start_pos + seq_len].unsqueeze(0).unsqueeze(0)
 
         x_rotated = torch.cat([
             x1 * cos - x2 * sin,
@@ -34,6 +34,7 @@ class RoPE(nn.Module):
         ], dim=-1)
 
         return x_rotated
+
 
 
 if __name__ == '__main__':
