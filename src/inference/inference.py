@@ -1,10 +1,8 @@
 import os
 import torch
-from torch.utils.checkpoint import checkpoint
 
 from src.model.llama import LLaMA
 from src.dataset.tokenizer import Tokenizer
-from src.dataset.dataset import Dataset
 from src.config.LLaMAConfig import LLaMAConfig
 
 def main():
@@ -36,7 +34,7 @@ def main():
         input_ids = tokenizer.encode(prompt)
         input_ids = torch.tensor([input_ids], dtype=torch.long, device=config.device)
 
-        output_ids = model.generate(input_ids, max_new_token=256, temperature=1.0, top_p=0.9, top_p_threshold=0.9, eos_token_id=tokenizer.vocab.get("<|endoftext|>", None))
+        output_ids = model.generate(input_ids, max_new_token=256, temperature=1.0, top_p=0.9, eos_token_id=tokenizer.vocab.get("<|endoftext|>", None))
 
         generated_text = tokenizer.decode(output_ids.tolist())
 

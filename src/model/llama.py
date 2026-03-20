@@ -99,14 +99,7 @@ class LLaMA(nn.Module):
         bs, seq_len = input_ids.size()
 
         if self.kv_cache is not None:
-            self.kv_cache = KVCache(
-            self.config.num_layers,
-            self.config.batch_size,
-            self.config.max_seq_len,
-            self.config.num_kv_heads,
-            self.config.d_model // self.config.num_heads,
-            device=self.config.device
-        )
+            self.reset_kv_cache()
         # prefill 阶段
         logits, _ = self.forward(input_ids, start_pos=0, use_cache=True)
 
@@ -124,7 +117,7 @@ class LLaMA(nn.Module):
 
             x = generated[:, -1]
 
-            logits, _ = self.forward(input_ids, start_pos=pos, use_cache=True)
+            logits, _ = self.forward(x, start_pos=pos, use_cache=True)
             next_logits = logits[:, -1, :] / temperature
 
             if top_k > 0.0:
@@ -152,5 +145,13 @@ class LLaMA(nn.Module):
 
         return generated
 
-
+    def reset_kv_cache(self):
+        self.kv_cache = KVCache(
+            self.config.num_layers,
+            self.config.batch_size,
+            self.config.max_seq_len,
+            self.config.num_kv_heads,
+            self.config.d_model // self.config.num_heads,
+            device=self.config.device
+        )
 
