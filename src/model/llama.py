@@ -22,7 +22,7 @@ class LLaMABlock(nn.Module):
                                    config.num_heads,
                                    config.num_kv_heads,
                                    config.max_seq_len,
-                                   RoPE(config.d_model, config.max_seq_len, config.d_model // config.num_heads),
+                                   RoPE(config.d_model // config.num_heads, config.max_seq_len, config.base),
                                    layer_idx)
 
         self.ffn_norm = RMSNorm(config.d_model, config.norm_eps)
@@ -74,7 +74,7 @@ class LLaMA(nn.Module):
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
-    def forward(self, input_ids: torch.Tensor, targets: None | torch.Tensor = None, start_pos: int = 0, use_cache: bool = True) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, input_ids: torch.Tensor, targets: None | torch.Tensor = None, start_pos: int = 0, use_cache: bool = False) -> Tuple[torch.Tensor, torch.Tensor]:
         bs, seq_len = input_ids.size()
 
         x = self.embed_tokens(input_ids)
@@ -88,8 +88,8 @@ class LLaMA(nn.Module):
 
         loss = None
         if targets is not None:
-            loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, self.config.vocab_size), targets.view(-1), ignore_index=-100)
+            loss_fct = nn.CrossEntropyLoss(ignore_index=-100)
+            loss = loss_fct(logits.view(-1, self.config.vocab_size), targets.view(-1))
 
         return logits, loss
 
