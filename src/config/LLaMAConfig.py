@@ -10,7 +10,7 @@ class LLaMAConfig:
     max_seq_len: int = 4096
     norm_eps: float = 1e-6
     base: float = 10000.0
-    vocab_size: int = 50000
+    vocab_size: int = 50257
     num_layers: int = 16
     batch_size: int = 64
     device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

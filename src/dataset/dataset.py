@@ -22,6 +22,7 @@ class TinyStoriesGPT2Dataset(Dataset):
         total_tokens = 0
 
         for story in raw_stories:
+
             encoding = self.tokenizer.encode(story + "<|endoftext|>")
             total_tokens += len(encoding)
 
@@ -36,7 +37,7 @@ class TinyStoriesGPT2Dataset(Dataset):
 
     def _add_sample(self, token_ids):
         if len(token_ids) < self.max_length:
-            token_ids = token_ids + ["<endoftext>"] * (self.max_length - len(token_ids))
+            token_ids = token_ids + [self.tokenizer.vocab["<|endoftext|>"]] * (self.max_length - len(token_ids))
 
         token_ids = token_ids[:self.max_length]
         self.samples.append(token_ids)

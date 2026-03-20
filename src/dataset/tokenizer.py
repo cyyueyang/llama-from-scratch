@@ -14,7 +14,7 @@ class Tokenizer:
 
         self.merges: List[Tuple[str, str]] = []
         with open(merges_path, "r", encoding="utf-8") as f:
-            for line in f.readlines()[1:]:
+            for line in f.readlines()[1: -1]:
                 if line.strip():
                     a, b = line.strip().split()
                     self.merges.append((a, b))
@@ -95,12 +95,14 @@ class Tokenizer:
         pattern = re.compile(r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""")
         tokens = []
         for token in re.findall(pattern, text):
+
             token_bytes = token.encode("utf-8")
             token_translated = "".join(self.byte_encoder[b] for b in token_bytes)
             bpe_result = self._bpe(token_translated)
 
-            for bpe_token in bpe_result.split():
-                tokens.append(self.vocab[bpe_token])
+            for bpe_token in bpe_result.split(' '):
+
+                tokens.append(self.vocab.get(bpe_token, self.vocab.get(" ", 0)))
 
         return tokens
 
@@ -114,9 +116,9 @@ class Tokenizer:
 if __name__ == "__main__":
     # 测试用例
     tokenizer = Tokenizer()
-
+    print(len(tokenizer.vocab))
     # 测试 1：基本编码解码
-    text = "Hello world!"
+    text = "_"
     ids = tokenizer.encode(text)
     decoded = tokenizer.decode(ids)
     assert decoded == text, f"Expected '{text}', got '{decoded}'"
