@@ -33,10 +33,8 @@ def main():
 
         input_ids = tokenizer.encode(prompt)
         input_ids = torch.tensor([input_ids], dtype=torch.long, device=config.device)
-
-        output_ids = model.generate(input_ids, max_new_token=256, temperature=1.0, top_p=0.9, eos_token_id=tokenizer.vocab.get("<|endoftext|>", None))
-
-        generated_text = tokenizer.decode(output_ids.tolist())
+        output_ids = model.generate(input_ids, max_new_token=256, temperature=1.0, top_k = 10, top_p=0.9, eos_token_id=tokenizer.vocab.get("<|endoftext|>", None))
+        generated_text = tokenizer.decode(output_ids.tolist()[0])
 
         print(f"Generated text: {generated_text}")
         print("=" * 50)

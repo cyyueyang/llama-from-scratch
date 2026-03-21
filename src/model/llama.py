@@ -115,7 +115,7 @@ class LLaMA(nn.Module):
 
         for pos in range(seq_len, seq_len + max_new_token - 1):
 
-            x = generated[:, -1]
+            x = generated[:, -1:]
 
             logits, _ = self.forward(x, start_pos=pos, use_cache=True)
             next_logits = logits[:, -1, :] / temperature
